@@ -1,8 +1,9 @@
 #ifndef CRC32_H
 #define CRC32_H
 #include <QtGui>
+#include "algorithminterface.h"
 
-class Crc32
+class Crc32 : public AlgorithmInterface
 {
     private:
         unsigned long crc_table[256];
@@ -11,8 +12,9 @@ class Crc32
         void crc_init();
 
     public:
-        unsigned long gethash();
-        Crc32(QString);
+        QString getHashString();
+        Crc32();
+        void openFile(QString path);
 };
 
 #endif

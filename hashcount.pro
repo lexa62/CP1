@@ -17,7 +17,6 @@ SOURCES += main.cpp \
     hashcount.cpp \
     selectingaction.cpp \
     hashviewwidget.cpp \
-    driver.cpp \
     md5.cpp
 
 HEADERS  += \
@@ -25,6 +24,8 @@ HEADERS  += \
     hashcount.h \
     selectingaction.h \
     hashviewwidget.h \
-    md5.h
+    md5.h \
+    enumAlgorithm.h \
+    algorithminterface.h
 
 FORMS    +=

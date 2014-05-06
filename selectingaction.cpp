@@ -5,48 +5,19 @@
 #include <QBoxLayout>
 #include <QHeaderView>
 #include <QLabel>
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <cstring>
-
-#include "md5.h"
-
-
-// Length of test block, number of test blocks.
-
-#define TEST_BLOCK_LEN 1000
-#define TEST_BLOCK_COUNT 1000
-
-
-static void  MD5_file (char *);
-
-
-
-// Digests a file and prints the result.
-
-static void MD5_file (char *filename){
-
-  ifstream file(filename);
-
-  if (!file)
-    cerr << filename <<" can't be opened" << endl;
-  else {
-    MD5 context(file);
-    cout <<  "MD5 ("  << filename <<  ") = "  <<  context << endl;
-  }
-}
-
-
+#include <enumAlgorithm.h>
 
 SelectingAction::SelectingAction(QWidget *parent) :
     QWidget(parent)
 {
-    MD5_file("e:\\1.txt");
-    QLabel *label = new QLabel("Select files for creating/checking hash:");
+    QLabel *label1 = new QLabel("Select algorithm:");
+    QLabel *label2 = new QLabel("Select files for creating/checking hash:");
     getHashButton = new QPushButton("Get hash");
     checkHashButton = new QPushButton("Check hash");
+    comboBox = new QComboBox();
+    QStringList stringList;
+    stringList << "md5" << "crc32";
+    comboBox->addItems(stringList);
 
     fileSystemModel = new QFileSystemModel(this);
     fileSystemModel->setRootPath("");
@@ -63,7 +34,9 @@ SelectingAction::SelectingAction(QWidget *parent) :
 
     QVBoxLayout *vbox = new QVBoxLayout;
     QHBoxLayout *hbox = new QHBoxLayout;
-    vbox->addWidget(label);
+    vbox->addWidget(label1);
+    vbox->addWidget(comboBox);
+    vbox->addWidget(label2);
     vbox->addWidget(treeView);
     hbox->addWidget(getHashButton);
     hbox->addWidget(checkHashButton);
@@ -77,6 +50,7 @@ SelectingAction::SelectingAction(QWidget *parent) :
 
 void SelectingAction::getSelectedFiles()
 {
+    algorithmType = comboBox->currentIndex();
     if(treeView->selectionModel()->hasSelection())
     {
         QModelIndexList indexList = treeView->selectionModel()->selectedRows();
@@ -108,4 +82,9 @@ SelectingAction::~SelectingAction()
 {
     qDebug()<<"~SelectingAction()";
     //delete fileSystemModel;
+}
+
+int SelectingAction::getAlgorithmType()
+{
+    return algorithmType;
 }

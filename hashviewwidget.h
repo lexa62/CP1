@@ -12,12 +12,14 @@ class HashViewWidget : public QWidget
 {
     Q_OBJECT
 public:
-    HashViewWidget(QFileInfoList, QWidget *parent = 0);
+    void addTableItems();
+    HashViewWidget(int, QFileInfoList, QWidget *parent = 0);
     ~HashViewWidget();
 public slots:
     void saveFilesHash();
 
 private:
+    int algorithmType;
     QTableWidget *filesTable;
     QFileInfoList selectedFileList;
     QPushButton *saveButton;

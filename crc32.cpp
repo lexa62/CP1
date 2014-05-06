@@ -29,9 +29,11 @@ void Crc32::crc_init()
     }
 }
 
-unsigned long Crc32::gethash()
+QString Crc32::getHashString()
 {
-    return crc32;
+    QString tmp;
+    tmp.sprintf("%08lX", crc32);
+    return tmp;
 }
 
 /*Crc32::Crc32(const char * filePath): crc32(0)
@@ -58,9 +60,13 @@ unsigned long Crc32::gethash()
     }
 }*/
 
-Crc32::Crc32(QString path): crc32(0)
+Crc32::Crc32(): crc32(0)
 {
     crc_init();
+}
+
+void Crc32::openFile(QString path)
+{
     QFile file(path);
     if(file.open(QIODevice::ReadOnly))
     {
@@ -76,4 +82,6 @@ Crc32::Crc32(QString path): crc32(0)
         delete [] buf;
         file.close();
     }
+    else
+        qDebug() << path <<" can't be opened" << endl;
 }

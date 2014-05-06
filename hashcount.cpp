@@ -20,9 +20,9 @@ HashCount::~HashCount()
 
 void HashCount::changeWidget(QFileInfoList list)
 {
-    hashViewWidget = new HashViewWidget(list, this);
-    hashViewWidget->show();
+    hashViewWidget = new HashViewWidget(selectingAction->getAlgorithmType(), list, this);
     setCentralWidget(hashViewWidget);
+    hashViewWidget->addTableItems();
 
 
 }
