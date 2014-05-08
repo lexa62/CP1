@@ -31,3 +31,7 @@ HEADERS  += \
     checkfilehashwidget.h
 
 FORMS    +=
+
+OTHER_FILES += \
+    monkey_on_32x32.png \
+    monkey_off_32x32.png

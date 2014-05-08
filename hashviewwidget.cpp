@@ -35,11 +35,23 @@ HashViewWidget::HashViewWidget(int type, QFileInfoList filesList, QWidget *paren
 
 void HashViewWidget::saveFilesHash()
 {
-    QString fileName = QFileDialog::getSaveFileName(this, "Save File",
-                                                    QDir::currentPath(),
-                                                    "hash (*.crc32);; text files (*.txt)");
-    qDebug() << fileName;
-    QFile file(fileName);
+    QString fileSuffix;
+    QString fileFilter;
+    switch (algorithmType)
+    {
+        case AlgorithmType::crc32:
+            fileSuffix = "*.crc32";
+            break;
+        case AlgorithmType::md5:
+            fileSuffix = "*.md5";
+            break;
+        default:
+            break;
+    }
+    fileFilter = tr("hash (%1);; text files (*.txt)").arg(fileSuffix);
+    QString filePath = QFileDialog::getSaveFileUrl(this, "Save File", QDir::currentPath(), fileFilter).path();
+    qDebug() << filePath;
+    QFile file(filePath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
         return;
 

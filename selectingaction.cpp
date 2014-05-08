@@ -53,14 +53,14 @@ void SelectingAction::getHash()
 {
     QFileInfoList list = getSelectedFiles();
     if(!list.empty())
-        emit createHashReady(getSelectedFiles(), WidgetType::hashView);
+        emit createHashReady(list, WidgetType::hashView);
 }
 
 void SelectingAction::checkHash()
 {
     QFileInfoList list = getSelectedFiles();
     if(list.count() == 1)
-        emit createHashReady(getSelectedFiles(), WidgetType::checkHashFile);
+        emit createHashReady(list, WidgetType::checkHashFile);
 }
 
 
