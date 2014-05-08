@@ -20,13 +20,15 @@ public:
     int getAlgorithmType();
 
 public slots:
-    void getSelectedFiles();
+    void getHash();
+    void checkHash();
 
 signals:
-    void createHashReady(QFileInfoList);
+    void createHashReady(QFileInfoList, int);
 
 private:
     int algorithmType;
+    QFileInfoList getSelectedFiles();
     QPushButton *getHashButton;
     QPushButton *checkHashButton;
     QComboBox *comboBox;

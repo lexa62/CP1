@@ -22,7 +22,7 @@ public:
     MD5              (unsigned char *string); // digest string, finalize
     /*MD5              (std::istream& stream);       // digest stream, finalize
   MD5              (FILE *file);            // digest file, close, finalize*/
-    MD5              (QString path);      // digest stream, close, finalize
+    //MD5              (QString path);      // digest stream, close, finalize
     void fileOpen (QString path);
 
     // methods to acquire finalized result

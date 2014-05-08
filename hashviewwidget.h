@@ -13,7 +13,7 @@ class HashViewWidget : public QWidget
     Q_OBJECT
 public:
     void addTableItems();
-    HashViewWidget(int, QFileInfoList, QWidget *parent = 0);
+    HashViewWidget(int type, QFileInfoList filesList, QWidget *parent = 0);
     ~HashViewWidget();
 public slots:
     void saveFilesHash();

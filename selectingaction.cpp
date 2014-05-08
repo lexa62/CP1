@@ -45,16 +45,32 @@ SelectingAction::SelectingAction(QWidget *parent) :
     setLayout(vbox);
     setWindowTitle("Hashcount");
 
-    connect(getHashButton, SIGNAL(clicked()), this, SLOT(getSelectedFiles()));
+    connect(getHashButton, SIGNAL(clicked()), this, SLOT(getHash()));
+    connect(checkHashButton, SIGNAL(clicked()), this, SLOT(checkHash()));
 }
 
-void SelectingAction::getSelectedFiles()
+void SelectingAction::getHash()
+{
+    QFileInfoList list = getSelectedFiles();
+    if(!list.empty())
+        emit createHashReady(getSelectedFiles(), WidgetType::hashView);
+}
+
+void SelectingAction::checkHash()
+{
+    QFileInfoList list = getSelectedFiles();
+    if(list.count() == 1)
+        emit createHashReady(getSelectedFiles(), WidgetType::checkHashFile);
+}
+
+
+QFileInfoList SelectingAction::getSelectedFiles()
 {
     algorithmType = comboBox->currentIndex();
+    QFileInfoList filesInfoList;
     if(treeView->selectionModel()->hasSelection())
     {
         QModelIndexList indexList = treeView->selectionModel()->selectedRows();
-        QFileInfoList filesInfoList;
         foreach (QModelIndex index, indexList)
         {
             QFileInfo fileInfo = fileSystemModel->fileInfo(index);
@@ -74,8 +90,8 @@ void SelectingAction::getSelectedFiles()
             qDebug() << info.absoluteFilePath();
         }
         qDebug() << "Files count: " << filesInfoList.count();
-        emit createHashReady(filesInfoList);
     }
+    return filesInfoList;
 }
 
 SelectingAction::~SelectingAction()

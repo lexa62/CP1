@@ -143,10 +143,10 @@ MD5::MD5(istream& stream){
 
 
 
-MD5::MD5(QString path)
+/*MD5::MD5(QString path)
 {
 
-}
+}*/
 
 void MD5::openFile(QString path)
 {

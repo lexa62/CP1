@@ -2,6 +2,7 @@
 #define HASHCOUNT_H
 #include "selectingaction.h"
 #include "hashviewwidget.h"
+#include "checkfilehashwidget.h"
 
 class HashCount : public QMainWindow
 {
@@ -11,10 +12,11 @@ class HashCount : public QMainWindow
         HashCount();
         ~HashCount();
     public slots:
-        void changeWidget(QFileInfoList);
+        void changeWidget(QFileInfoList, int widgetType);
     private:
         SelectingAction *selectingAction;
         HashViewWidget *hashViewWidget;
+        CheckFileHashWidget *checkFileHashWidget;
 };
 
 #endif // HASHCOUNT_H

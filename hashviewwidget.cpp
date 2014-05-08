@@ -12,7 +12,7 @@
 #include "algorithminterface.h"
 
 HashViewWidget::HashViewWidget(int type, QFileInfoList filesList, QWidget *parent) :
-    algorithmType(type), selectedFileList(filesList), QWidget(parent)
+    QWidget(parent), algorithmType(type), selectedFileList(filesList)
 {
     filesTable = new QTableWidget(0, 3);
     QStringList labels;

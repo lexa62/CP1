@@ -9,4 +9,15 @@ namespace AlgorithmType
         sha1
     };
 }
+
+namespace WidgetType
+{
+    enum Type
+    {
+        selectingAction,
+        hashView,
+        checkHashFile,
+        checkHashFiles
+    };
+}
 #endif // ENUMALGORITHM_H
