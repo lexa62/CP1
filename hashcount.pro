@@ -18,7 +18,8 @@ SOURCES += main.cpp \
     selectingaction.cpp \
     hashviewwidget.cpp \
     md5.cpp \
-    checkfilehashwidget.cpp
+    checkfilehashwidget.cpp \
+    checkfileshasheswidget.cpp
 
 HEADERS  += \
     crc32.h \
@@ -28,7 +29,8 @@ HEADERS  += \
     md5.h \
     enumAlgorithm.h \
     algorithminterface.h \
-    checkfilehashwidget.h
+    checkfilehashwidget.h \
+    checkfileshasheswidget.h
 
 FORMS    +=
 

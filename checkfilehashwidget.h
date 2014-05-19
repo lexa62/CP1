@@ -27,7 +27,8 @@ class CheckFileHashWidget : public QWidget
         QLineEdit *inputLine;
         QPushButton *compareWithFile;
         QPixmap icon;
-        QLabel *label3;
+        QLabel *labelIcon;
+        QString getHash(QString path);
 };
 
 #endif // CHECKFILEHASHWIDGET_H

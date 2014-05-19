@@ -153,7 +153,6 @@ void MD5::openFile(QString path)
     QFile file(path);
     if(file.open(QIODevice::ReadOnly))
     {
-
         QDataStream in(&file);
         update (in);
         finalize();

@@ -23,6 +23,7 @@ private:
     QTableWidget *filesTable;
     QFileInfoList selectedFileList;
     QPushButton *saveButton;
+    QString getHash(QString path);
 };
 
 #endif // HASHVIEWWIDGET_H

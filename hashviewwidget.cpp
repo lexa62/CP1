@@ -7,6 +7,7 @@
 #include <QPushButton>
 #include <QFileDialog>
 #include <QProgressDialog>
+#include <QErrorMessage>
 #include "md5.h"
 #include "enumAlgorithm.h"
 #include "algorithminterface.h"
@@ -16,14 +17,14 @@ HashViewWidget::HashViewWidget(int type, QFileInfoList filesList, QWidget *paren
 {
     filesTable = new QTableWidget(0, 3);
     QStringList labels;
-    labels << "File Name" << "Size" << "Hash";
+    labels << "File Name" << "Size (KB)" << "Hash";
     filesTable->setHorizontalHeaderLabels(labels);
     filesTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
-    //filesTable->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
     filesTable->horizontalHeader()->setStretchLastSection(true);
     filesTable->setShowGrid(false);
+    filesTable->setSortingEnabled(false);
 
-    QLabel *label = new QLabel("Files:");
+    QLabel *label = new QLabel("Result for selected files:");
     saveButton = new QPushButton("Save results");
     QVBoxLayout *vbox = new QVBoxLayout();
     vbox->addWidget(label);
@@ -53,7 +54,11 @@ void HashViewWidget::saveFilesHash()
     qDebug() << filePath;
     QFile file(filePath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        QErrorMessage *mes = new QErrorMessage(this);
+        mes->showMessage(tr("File not opened (path: %1)").arg(filePath));
         return;
+    }
 
     QTextStream out(&file);
     int count = filesTable->rowCount();
@@ -62,7 +67,6 @@ void HashViewWidget::saveFilesHash()
         out << filesTable->item(i, 2)->text() << " *" + filesTable->item(i, 0)->text()<< "\n";
     }
     file.close();
-
 }
 
 HashViewWidget::~HashViewWidget()
@@ -73,43 +77,48 @@ HashViewWidget::~HashViewWidget()
 
 void HashViewWidget::addTableItems()
 {
-    QProgressDialog progress("Create files hash...", "Abort", 0, selectedFileList.count(), this);
+    QProgressDialog progress("", "Abort", 0, selectedFileList.count(), this);
     progress.setWindowModality(Qt::WindowModal);
-    progress.setMinimumDuration(200);
+    progress.setWindowTitle("Create files hash...");
+    progress.setMinimumDuration(0);
 
-    for (int i = 0; i < selectedFileList.size(); ++i)
+    for (int i = 0; i < selectedFileList.size(); i++)
     {
         progress.setValue(i);
-        progress.setLabelText(tr("file number %1 of %2...").arg(i).arg(selectedFileList.count()));
-        qApp->processEvents();
+        progress.setLabelText(tr("File number %1 of %2...").arg(i).arg(selectedFileList.count()));
         if (progress.wasCanceled())
             break;
 
         QTableWidgetItem *fileNameItem = new QTableWidgetItem(selectedFileList[i].fileName());
-        //fileNameItem->setFlags(fileNameItem->flags() ^ Qt::ItemIsEditable);
-        QTableWidgetItem *sizeItem = new QTableWidgetItem(tr("%1 KB").arg(int((selectedFileList[i].size() + 1023) / 1024)));
-        sizeItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
-        //sizeItem->setFlags(sizeItem->flags() ^ Qt::ItemIsEditable);
+        QTableWidgetItem *sizeItem = new QTableWidgetItem();
+        sizeItem->setData(Qt::DisplayRole, (selectedFileList[i].size() + 1023) / 1024);
+        sizeItem->setTextAlignment(Qt::AlignCenter);
 
-        AlgorithmInterface *h;
-        if(algorithmType == AlgorithmType::crc32)
-            h = new Crc32();
-
-            //QTableWidgetItem *hashItem = new QTableWidgetItem(h.getHashString());
-        if(algorithmType == AlgorithmType::md5)
-            h = new MD5();
-
-        h->openFile(selectedFileList[i].absoluteFilePath());
-        QTableWidgetItem *hashItem = new QTableWidgetItem(h->getHashString());
+        QTableWidgetItem *hashItem = new QTableWidgetItem(getHash(selectedFileList[i].absoluteFilePath()));
 
         int row = filesTable->rowCount();
         filesTable->insertRow(row);
         filesTable->setItem(row, 0, fileNameItem);
         filesTable->setItem(row, 1, sizeItem);
         filesTable->setItem(row, 2, hashItem);
-        delete h;
     }
     progress.setValue(selectedFileList.count());
     filesTable->setSortingEnabled(true);
     filesTable->sortByColumn(0);
+}
+
+QString HashViewWidget::getHash(QString path)
+{
+    QString hash;
+    AlgorithmInterface *h;
+    if(algorithmType == AlgorithmType::crc32)
+        h = new Crc32();
+
+    if(algorithmType == AlgorithmType::md5)
+        h = new MD5();
+
+    h->openFile(path);
+    hash = h->getHashString();
+    delete h;
+    return hash;
 }

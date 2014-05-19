@@ -61,6 +61,8 @@ void SelectingAction::checkHash()
     QFileInfoList list = getSelectedFiles();
     if(list.count() == 1)
         emit createHashReady(list, WidgetType::checkHashFile);
+    else if(list.count() > 1)
+        emit createHashReady(list, WidgetType::checkHashFiles);
 }
 
 

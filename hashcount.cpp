@@ -7,9 +7,8 @@ HashCount::HashCount()
 {
     selectingAction = new SelectingAction(this);
     setCentralWidget(selectingAction);
-    resize(600, 500);
+    resize(700, 500);
     connect(selectingAction, SIGNAL(createHashReady(QFileInfoList, int)), this, SLOT(changeWidget(QFileInfoList, int)));
-    //windowSelection.show();
 }
 
 HashCount::~HashCount()
@@ -30,6 +29,12 @@ void HashCount::changeWidget(QFileInfoList list, int widgetType)
     else if(widgetType == WidgetType::checkHashFile)
     {
         checkFileHashWidget = new CheckFileHashWidget(selectingAction->getAlgorithmType(), list, this);
+        resize(400, 100);
         setCentralWidget(checkFileHashWidget);
+    }
+    else if(widgetType == WidgetType::checkHashFiles)
+    {
+        checkFilesHashesWidget = new CheckFilesHashesWidget(selectingAction->getAlgorithmType(), list, this);
+        setCentralWidget(checkFilesHashesWidget);
     }
 }

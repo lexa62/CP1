@@ -3,6 +3,7 @@
 #include "selectingaction.h"
 #include "hashviewwidget.h"
 #include "checkfilehashwidget.h"
+#include "checkfileshasheswidget.h"
 
 class HashCount : public QMainWindow
 {
@@ -17,6 +18,7 @@ class HashCount : public QMainWindow
         SelectingAction *selectingAction;
         HashViewWidget *hashViewWidget;
         CheckFileHashWidget *checkFileHashWidget;
+        CheckFilesHashesWidget *checkFilesHashesWidget;
 };
 
 #endif // HASHCOUNT_H
