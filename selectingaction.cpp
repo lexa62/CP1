@@ -5,7 +5,7 @@
 #include <QBoxLayout>
 #include <QHeaderView>
 #include <QLabel>
-#include <enumAlgorithm.h>
+#include <enumTypes.h>
 
 SelectingAction::SelectingAction(QWidget *parent) :
     QWidget(parent)
@@ -16,7 +16,7 @@ SelectingAction::SelectingAction(QWidget *parent) :
     checkHashButton = new QPushButton("Check hash");
     comboBox = new QComboBox();
     QStringList stringList;
-    stringList << "md5" << "crc32";
+    stringList << "md5" << "crc32" << "sha1";
     comboBox->addItems(stringList);
 
     fileSystemModel = new QFileSystemModel(this);

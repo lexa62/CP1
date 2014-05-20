@@ -1,7 +1,7 @@
 #include "hashcount.h"
 #include "hashviewwidget.h"
 #include "QtGui"
-#include "enumAlgorithm.h"
+#include "enumTypes.h"
 
 HashCount::HashCount()
 {

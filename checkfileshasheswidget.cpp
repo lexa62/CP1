@@ -8,6 +8,7 @@
 #include "algorithminterface.h"
 #include "crc32.h"
 #include "md5.h"
+#include "sha1.h"
 
 void CheckFilesHashesWidget::fillFileTable(QHash<QString, QString> hashContainer, QFileInfoList fileInfoList)
 {
@@ -20,6 +21,8 @@ void CheckFilesHashesWidget::fillFileTable(QHash<QString, QString> hashContainer
             if(!i.key().compare(fileInfoList[j].fileName()))
             {
                 QString createdHash = getHash(fileInfoList[j].absoluteFilePath());
+                qDebug() << "file:" << i.key() << i.value();
+                qDebug() << "created hash" << createdHash;
                 if(!i.value().compare(createdHash))
                 {
                     insertRow(fileInfoList[j].fileName(), createdHash, "ok");
@@ -82,6 +85,9 @@ QString CheckFilesHashesWidget::getHash(QString path)
 
     if(algorithmType == AlgorithmType::md5)
         h = new MD5();
+
+    if(algorithmType == AlgorithmType::sha1)
+        h = new Sha1();
 
     h->openFile(path);
     hash = h->getHashString();

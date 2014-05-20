@@ -1,9 +1,10 @@
 #include "checkfilehashwidget.h"
 #include "algorithminterface.h"
-#include "enumAlgorithm.h"
+#include "enumTypes.h"
 #include <QBoxLayout>
 #include <QFileInfo>
 #include "md5.h"
+#include "sha1.h"
 #include "crc32.h"
 #include <QMessageBox>
 #include <QFileDialog>
@@ -59,6 +60,9 @@ QString CheckFileHashWidget::getHash(QString path)
 
     if(algorithmType == AlgorithmType::md5)
         h = new MD5();
+
+    if(algorithmType == AlgorithmType::sha1)
+        h = new Sha1();
 
     h->openFile(path);
     hash = h->getHashString();

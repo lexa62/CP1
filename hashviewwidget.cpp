@@ -3,13 +3,14 @@
 #include <QBoxLayout>
 #include <QtGui>
 #include "crc32.h"
+#include "md5.h"
+#include "sha1.h"
 #include <QHeaderView>
 #include <QPushButton>
 #include <QFileDialog>
 #include <QProgressDialog>
 #include <QErrorMessage>
-#include "md5.h"
-#include "enumAlgorithm.h"
+#include "enumTypes.h"
 #include "algorithminterface.h"
 
 HashViewWidget::HashViewWidget(int type, QFileInfoList filesList, QWidget *parent) :
@@ -45,6 +46,9 @@ void HashViewWidget::saveFilesHash()
             break;
         case AlgorithmType::md5:
             fileSuffix = "*.md5";
+            break;
+        case AlgorithmType::sha1:
+            fileSuffix = "*.sha1";
             break;
         default:
             break;
@@ -116,6 +120,9 @@ QString HashViewWidget::getHash(QString path)
 
     if(algorithmType == AlgorithmType::md5)
         h = new MD5();
+
+    if(algorithmType == AlgorithmType::sha1)
+        h = new Sha1();
 
     h->openFile(path);
     hash = h->getHashString();
