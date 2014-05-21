@@ -5,6 +5,7 @@
 #include <QHBoxLayout>
 #include <QMessageBox>
 #include <QHash>
+#include <QProgressDialog>
 #include "algorithminterface.h"
 #include "crc32.h"
 #include "md5.h"
@@ -13,9 +14,18 @@
 void CheckFilesHashesWidget::fillFileTable(QHash<QString, QString> hashContainer, QFileInfoList fileInfoList)
 {
     QHash<QString, QString>::const_iterator i = hashContainer.constBegin();
-    int ok = 0, notEqual = 0, notFound = 0;
-    for (;i != hashContainer.constEnd(); i++)
+    int ok = 0, notEqual = 0, notFound = 0, progress_num = 0;
+    QProgressDialog progress("", "Abort", 0, hashContainer.count(), this);
+    progress.setWindowModality(Qt::WindowModal);
+    progress.setWindowTitle("Create files hash...");
+    progress.setMinimumDuration(0);
+    for (;i != hashContainer.constEnd(); i++, progress_num++)
     {
+        progress.setValue(progress_num);
+        progress.setLabelText(tr("File number %1 of %2...").arg(progress_num+1).arg(hashContainer.count()));
+        if (progress.wasCanceled())
+            break;
+
         for(int j = 0; j < fileInfoList.count(); j++)
         {
             if(!i.key().compare(fileInfoList[j].fileName()))
@@ -42,6 +52,7 @@ void CheckFilesHashesWidget::fillFileTable(QHash<QString, QString> hashContainer
             }
         }
     }
+    progress.setValue(hashContainer.count());
     statistics->setText(tr("Errors: %1\nOk: %2 Not found: %3 Not equal: %4").arg(notFound+notEqual)
                         .arg(ok).arg(notFound).arg(notEqual));
 }
@@ -122,7 +133,7 @@ QHash<QString, QString> CheckFilesHashesWidget::getInfoFromFile()
     QString text = in.readAll();
     QStringList lst;
     QHash<QString, QString> hashContainer;
-    lst = text.replace("*", "").split(QRegExp("\\s+"), QString::SkipEmptyParts);
+    lst = text.split(QRegExp("\\n|\\r\\n|\\r|\\s\\*"), QString::SkipEmptyParts);
     for(int i = 1; i < lst.count(); i+=2)
     {
         hashContainer.insert(lst[i], lst[i-1]);
