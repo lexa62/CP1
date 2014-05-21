@@ -19,7 +19,8 @@ SOURCES += main.cpp \
     hashviewwidget.cpp \
     md5.cpp \
     checkfilehashwidget.cpp \
-    checkfileshasheswidget.cpp
+    checkfileshasheswidget.cpp \
+    sha1.cpp
 
 HEADERS  += \
     crc32.h \
@@ -27,13 +28,17 @@ HEADERS  += \
     selectingaction.h \
     hashviewwidget.h \
     md5.h \
-    enumAlgorithm.h \
     algorithminterface.h \
     checkfilehashwidget.h \
-    checkfileshasheswidget.h
+    checkfileshasheswidget.h \
+    sha1.h \
+    enumTypes.h
 
 FORMS    +=
 
 OTHER_FILES += \
-    monkey_on_32x32.png \
-    monkey_off_32x32.png
+    icons/monkey_on_32x32.png \
+    icons/monkey_off_32x32.png
+
+RESOURCES += \
+    icons.qrc

@@ -1,7 +1,7 @@
 #include "checkfileshasheswidget.h"
 #include <QFileDialog>
 #include <QHeaderView>
-#include "enumAlgorithm.h"
+#include "enumTypes.h"
 #include <QHBoxLayout>
 #include <QMessageBox>
 #include <QHash>
@@ -109,7 +109,7 @@ void CheckFilesHashesWidget::insertRow(QString fileName, QString createdHash, QS
 
 QHash<QString, QString> CheckFilesHashesWidget::getInfoFromFile()
 {
-    QString filePath = QFileDialog::getOpenFileUrl(this, "Select file with hashes", QDir::currentPath(), "Hash (*.md5 *.crc32 *.sha1)").path();
+    QString filePath = QFileDialog::getOpenFileUrl(this, "Select file with hashes", QDir::currentPath(), "Hash (*.md5 *.crc32 *.sha1)").toLocalFile();
     qDebug() << filePath;
 
     QFile file(filePath);

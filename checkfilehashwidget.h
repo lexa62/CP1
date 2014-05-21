@@ -5,7 +5,7 @@
 #include <QFileInfo>
 #include "QLineEdit"
 #include <QPushButton>
-#include <QIcon>
+#include <QPixmap>
 #include <QLabel>
 
 class CheckFileHashWidget : public QWidget

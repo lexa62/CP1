@@ -38,16 +38,17 @@ CheckFileHashWidget::CheckFileHashWidget(int Type, QFileInfoList list, QWidget *
 void CheckFileHashWidget::checkLines(QString string)
 {
     if(!string.compare(hashLine->text()))
-        icon.load("../hashcount/monkey_on_32x32.png");
+        icon.load(":/monkey_ok.png");
+
     else
-        icon.load("../hashcount/monkey_off_32x32.png");
+        icon.load(":/monkey_bad.png");
     labelIcon->resize(icon.size());
     labelIcon->setPixmap(icon);
 }
 
 void CheckFileHashWidget::compareFileAndLine()
 {
-    QString path = QFileDialog::getOpenFileUrl(this, "Open file", QDir::currentPath(), "All Files (*)").path();
+    QString path = QFileDialog::getOpenFileUrl(this, "Open file", QDir::currentPath(), "All Files (*)").toLocalFile();
     inputLine->setText(getHash(path));
 }
 

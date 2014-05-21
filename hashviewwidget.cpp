@@ -54,7 +54,7 @@ void HashViewWidget::saveFilesHash()
             break;
     }
     fileFilter = tr("hash (%1);; text files (*.txt)").arg(fileSuffix);
-    QString filePath = QFileDialog::getSaveFileUrl(this, "Save File", QDir::currentPath(), fileFilter).path();
+    QString filePath = QFileDialog::getSaveFileUrl(this, "Save File", QDir::currentPath(), fileFilter).toLocalFile();
     qDebug() << filePath;
     QFile file(filePath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -89,7 +89,7 @@ void HashViewWidget::addTableItems()
     for (int i = 0; i < selectedFileList.size(); i++)
     {
         progress.setValue(i);
-        progress.setLabelText(tr("File number %1 of %2...").arg(i).arg(selectedFileList.count()));
+        progress.setLabelText(tr("File number %1 of %2...").arg(i+1).arg(selectedFileList.count()));
         if (progress.wasCanceled())
             break;
 
