@@ -5,6 +5,7 @@
 #include <QtGui>
 #include "algorithminterface.h"
 using namespace std;
+
 class MD5 : public AlgorithmInterface
 {
 
@@ -12,9 +13,7 @@ public:
     // methods for controlled operation:
     MD5              ();  // simple initializer
     void  update     (unsigned char *input, unsigned int input_length);
-    /*void  update     (std::istream& stream);
-  void  update     (FILE *file);*/
-    void  update     (QDataStream &stream);
+    int update(QDataStream &stream);
     void  finalize   ();
 
     // constructors for special circumstances.  All these constructors finalize
@@ -30,7 +29,7 @@ public:
     char *hex_digest();  // digest as a 33-byte ascii-hex string
     friend std::ostream&   operator<< (std::ostream&, MD5 &context);
     QString getHashString();
-    void openFile(QString path);
+    int calculateFile(QString path);
     ~MD5();
 
 

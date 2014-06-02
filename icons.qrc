@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file alias="monkey_ok.png">icons/monkey_on_32x32.png</file>
-        <file alias="monkey_bad.png">icons/monkey_off_32x32.png</file>
+        <file alias="icon_bad.png">icons/icon_bad.png</file>
+        <file alias="icon_ok.png">icons/icon_ok.png</file>
     </qresource>
 </RCC>

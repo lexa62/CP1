@@ -16,7 +16,6 @@ class SelectingAction : public QWidget
 
 public:
     explicit SelectingAction(QWidget *parent = 0);
-    ~SelectingAction();
     int getAlgorithmType();
 
 public slots:

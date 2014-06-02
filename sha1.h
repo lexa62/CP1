@@ -7,10 +7,10 @@ class Sha1 : public AlgorithmInterface
 public:
     Sha1();
     void update(const std::string &s);
-    void update(std::istream &is);
+    int update(QDataStream &is);
     std::string final();
     static std::string from_file(const std::string &filename);
-    void openFile(QString path);
+    int calculateFile(QString path);
     QString getHashString();
 
 private:
@@ -29,7 +29,7 @@ private:
     void transform(uint32 block[BLOCK_BYTES]);
 
     static void buffer_to_block(const std::string &buffer, uint32 block[BLOCK_BYTES]);
-    static void read(std::istream &is, std::string &s, int max);
+    static void read(QDataStream &is, std::string &s, int max);
 };
 
 #endif // SHA1_H

@@ -11,6 +11,27 @@
 #include "md5.h"
 #include "sha1.h"
 
+CheckFilesHashesWidget::CheckFilesHashesWidget(int Type, QFileInfoList fileInfoList, QWidget *parent = 0) :
+    QWidget(parent), algorithmType(Type)
+{
+    QLabel *label = new QLabel("Checking result:");
+    QHash<QString, QString> hashContainer = getInfoFromFile();
+    QVBoxLayout *vbox = new QVBoxLayout();
+    filesTable = new QTableWidget(0, 3);
+    vbox->addWidget(label);
+    vbox->addWidget(filesTable);
+    setLayout(vbox);
+    QStringList labels;
+    labels << "File Name" << "Hash" << "Status";
+    filesTable->setHorizontalHeaderLabels(labels);
+    filesTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    filesTable->horizontalHeader()->setStretchLastSection(true);
+    filesTable->setShowGrid(false);
+
+    connect(this, SIGNAL(statusChanged(QString)), this->parent(), SLOT(changeStatus(QString)));
+    fillFileTable(hashContainer, fileInfoList);
+}
+
 void CheckFilesHashesWidget::fillFileTable(QHash<QString, QString> hashContainer, QFileInfoList fileInfoList)
 {
     QHash<QString, QString>::const_iterator i = hashContainer.constBegin();
@@ -31,9 +52,7 @@ void CheckFilesHashesWidget::fillFileTable(QHash<QString, QString> hashContainer
             if(!i.key().compare(fileInfoList[j].fileName()))
             {
                 QString createdHash = getHash(fileInfoList[j].absoluteFilePath());
-                qDebug() << "file:" << i.key() << i.value();
-                qDebug() << "created hash" << createdHash;
-                if(!i.value().compare(createdHash))
+                if(!i.value().compare(createdHash, Qt::CaseInsensitive))
                 {
                     insertRow(fileInfoList[j].fileName(), createdHash, "ok");
                     ok++;
@@ -53,56 +72,33 @@ void CheckFilesHashesWidget::fillFileTable(QHash<QString, QString> hashContainer
         }
     }
     progress.setValue(hashContainer.count());
-    statistics->setText(tr("Errors: %1\nOk: %2 Not found: %3 Not equal: %4").arg(notFound+notEqual)
-                        .arg(ok).arg(notFound).arg(notEqual));
-}
-
-CheckFilesHashesWidget::CheckFilesHashesWidget(int Type, QFileInfoList fileInfoList, QWidget *parent = 0) :
-    QWidget(parent), algorithmType(Type)
-{
-    try{
-        QLabel *label = new QLabel("Checking result:");
-        statistics = new QLabel();
-        QHash<QString, QString> hashContainer = getInfoFromFile();
-        QVBoxLayout *vbox = new QVBoxLayout();
-        filesTable = new QTableWidget(0, 3);
-        vbox->addWidget(label);
-        vbox->addWidget(filesTable);
-        vbox->addWidget(statistics);
-        setLayout(vbox);
-        QStringList labels;
-        labels << "File Name" << "Hash" << "Status";
-        filesTable->setHorizontalHeaderLabels(labels);
-        filesTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
-        filesTable->horizontalHeader()->setStretchLastSection(true);
-        filesTable->setShowGrid(false);
-
-        fillFileTable(hashContainer, fileInfoList);
-    }
-    catch(...)
-    {
-        int n = QMessageBox::critical(0, "Error", "File not opened. Application will be closed.", QMessageBox::Close);
-        if (n == QMessageBox::Close)
-            qApp->quit();
-    }
+    emit statusChanged(tr("Ok: %1. Errors: %2 (Not found: %3. Not equal: %4)").arg(ok)
+                       .arg(notFound+notEqual).arg(notFound).arg(notEqual));
 }
 
 QString CheckFilesHashesWidget::getHash(QString path)
 {
     QString hash;
-    AlgorithmInterface *h;
-    if(algorithmType == AlgorithmType::crc32)
-        h = new Crc32();
-
-    if(algorithmType == AlgorithmType::md5)
-        h = new MD5();
-
-    if(algorithmType == AlgorithmType::sha1)
-        h = new Sha1();
-
-    h->openFile(path);
-    hash = h->getHashString();
-    delete h;
+    AlgorithmInterface *algorithm;
+    switch (algorithmType)
+    {
+        case AlgorithmType::crc32:
+            algorithm = new Crc32();
+            break;
+        case AlgorithmType::md5:
+            algorithm = new MD5();
+            break;
+        case AlgorithmType::sha1:
+            algorithm = new Sha1();
+            break;
+        default:
+            break;
+    }
+    if(algorithm->calculateFile(path) != ErrorType::noError)
+        hash = "file error";
+    else
+        hash = algorithm->getHashString();
+    delete algorithm;
     return hash;
 }
 
@@ -118,17 +114,29 @@ void CheckFilesHashesWidget::insertRow(QString fileName, QString createdHash, QS
     filesTable->setItem(row, 2, statusItem);
 }
 
-QHash<QString, QString> CheckFilesHashesWidget::getInfoFromFile()
+int CheckFilesHashesWidget::openFile()
 {
-    QString filePath = QFileDialog::getOpenFileUrl(this, "Select file with hashes", QDir::currentPath(), "Hash (*.md5 *.crc32 *.sha1)").toLocalFile();
-    qDebug() << filePath;
+    QString filePath = QFileDialog::getOpenFileUrl(this, "Select file with hashes", QDir::currentPath(),
+                                                   "Hash (*.md5 *.crc32 *.sha1)").toLocalFile();
 
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
-        throw "";
-    }
+        return ErrorType::notOpened;
+    fileInfoPath = filePath;
+    return ErrorType::noError;
+}
 
+QHash<QString, QString> CheckFilesHashesWidget::getInfoFromFile()
+{
+    while(openFile() == ErrorType::notOpened)
+    {
+        int n = QMessageBox::warning(0, "Warning", "File not opened. Do you want to select another file",
+                                     QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+        if (n == QMessageBox::No)
+            qApp->quit();
+    }
+    QFile file(fileInfoPath);
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
     QTextStream in(&file);
     QString text = in.readAll();
     QStringList lst;

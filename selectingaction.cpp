@@ -65,7 +65,6 @@ void SelectingAction::checkHash()
         emit createHashReady(list, WidgetType::checkHashFiles);
 }
 
-
 QFileInfoList SelectingAction::getSelectedFiles()
 {
     algorithmType = comboBox->currentIndex();
@@ -88,18 +87,13 @@ QFileInfoList SelectingAction::getSelectedFiles()
             }
             else filesInfoList.append(fileInfo);
         }
-        foreach (QFileInfo info, filesInfoList) {
+        foreach (QFileInfo info, filesInfoList)
+        {
             qDebug() << info.absoluteFilePath();
         }
         qDebug() << "Files count: " << filesInfoList.count();
     }
     return filesInfoList;
-}
-
-SelectingAction::~SelectingAction()
-{
-    qDebug()<<"~SelectingAction()";
-    //delete fileSystemModel;
 }
 
 int SelectingAction::getAlgorithmType()

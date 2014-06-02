@@ -20,4 +20,14 @@ namespace WidgetType
         checkHashFiles
     };
 }
+
+namespace ErrorType
+{
+    enum Type
+    {
+        notOpened,
+        corruptData,
+        noError
+    };
+}
 #endif // ENUMALGORITHM_H

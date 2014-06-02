@@ -13,14 +13,15 @@ class CheckFilesHashesWidget : public QWidget
 public:
     CheckFilesHashesWidget(int Type, QFileInfoList fileInfoList, QWidget *parent);
     void fillFileTable(QHash<QString, QString> hashContainer, QFileInfoList fileInfoList);
+    int openFile();
 signals:
-
+    void statusChanged(QString status);
 public slots:
 
 private:
     QHash<QString, QString> getInfoFromFile();
+    QString fileInfoPath;
     int algorithmType;
-    QLabel *statistics;
     QTableWidget *filesTable;
     QString getHash(QString path);
     void insertRow(QString fileName, QString createdHash, QString status);

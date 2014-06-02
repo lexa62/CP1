@@ -16,6 +16,7 @@ class CheckFileHashWidget : public QWidget
         CheckFileHashWidget(int Type, QFileInfoList list, QWidget *parent = 0);
 
     signals:
+        void statusChanged(QString status);
 
     public slots:
         void checkLines(QString string);

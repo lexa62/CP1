@@ -37,7 +37,6 @@ HEADERS  += \
 FORMS    +=
 
 OTHER_FILES += \
-    icons/monkey_on_32x32.png \
     icons/monkey_off_32x32.png
 
 RESOURCES += \

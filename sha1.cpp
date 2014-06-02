@@ -2,19 +2,28 @@
 #include <sstream>
 #include <iomanip>
 #include <fstream>
+#include "enumTypes.h"
 
 Sha1::Sha1()
 {
     reset();
 }
 
-void Sha1::openFile(QString path)
+int Sha1::calculateFile(QString path)
 {
-    std::ifstream stream(path.toStdString().data(), std::ios::binary);
-    if(stream.is_open())
-        update(stream);
-    else
-        qDebug() << "file not opened sha1";
+    QFile file(path);
+    if(file.open(QIODevice::ReadOnly))
+    {
+        QDataStream in(&file);
+        if (update(in) == ErrorType::corruptData)
+        {
+            file.close();
+            return ErrorType::corruptData;
+        }
+        file.close();
+    }
+    else return ErrorType::notOpened;
+    return ErrorType::noError;
 }
 
 QString Sha1::getHashString()
@@ -23,26 +32,30 @@ QString Sha1::getHashString()
     return hash;
 }
 
-void Sha1::update(std::istream &is)
+int Sha1::update(QDataStream &is)
 {
     std::string rest_of_buffer;
     read(is, rest_of_buffer, BLOCK_BYTES - buffer.size());
     buffer += rest_of_buffer;
 
-    while (is)
+    while (!is.atEnd())
     {
         uint32 block[BLOCK_INTS];
         buffer_to_block(buffer, block);
         transform(block);
         read(is, buffer, BLOCK_BYTES);
+        qApp->processEvents();
+        if(is.status() != QDataStream::Ok)
+            return ErrorType::corruptData;
     }
+    return ErrorType::noError;
 }
 
-void Sha1::read(std::istream &is, std::string &s, int max)
+void Sha1::read(QDataStream &is, std::string &s, int max)
 {
     char sbuf[max];
-    is.read(sbuf, max);
-    s.assign(sbuf, is.gcount());
+    int count = is.readRawData(sbuf, max);
+    s.assign(sbuf, count);
 }
 
 

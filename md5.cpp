@@ -2,9 +2,8 @@
 
 #include <assert.h>
 #include <strings.h>
+#include "enumTypes.h"
 #include <iostream>
-
-
 
 // MD5 simple initialization method
 
@@ -13,9 +12,6 @@ MD5::MD5(){
     init();
 
 }
-
-
-
 
 // MD5 block update operation. Continues an MD5 message-digest
 // operation, processing another message block, and updating the
@@ -64,7 +60,7 @@ void MD5::update (uint1 *input, uint4 input_length) {
     memcpy(buffer+buffer_index, input+input_index, input_length-input_index);
 }
 
-void MD5::update(QDataStream& stream){
+int MD5::update(QDataStream& stream){
 
     unsigned char buffer[4096];
     int len;
@@ -72,14 +68,17 @@ void MD5::update(QDataStream& stream){
     while (!stream.atEnd())
     {
         len = stream.readRawData((char*)buffer, 4096);
-        update(buffer, len);
+        if(stream.status() == QDataStream::Ok)
+        {
+            update(buffer, len);
+            qApp->processEvents();
+        }
+        else
+            return ErrorType::corruptData;
     }
+    return ErrorType::noError;
 
 }
-
-
-
-
 
 // MD5 finalization. Ends an MD5 message-digest operation, writing the
 // the message digest and zeroizing the context.
@@ -117,7 +116,7 @@ void MD5::finalize (){
     // Zeroize sensitive information
     memset (buffer, 0, sizeof(*buffer));
 
-    finalized=1;
+    finalized = 1;
 
 }
 
@@ -148,17 +147,22 @@ MD5::MD5(istream& stream){
 
 }*/
 
-void MD5::openFile(QString path)
+int MD5::calculateFile(QString path)
 {
     QFile file(path);
     if(file.open(QIODevice::ReadOnly))
     {
         QDataStream in(&file);
-        update (in);
+        if (update(in) == ErrorType::corruptData)
+        {
+            file.close();
+            return ErrorType::corruptData;
+        }
         finalize();
         file.close();
     }
-    else qDebug() << path <<" can't be opened" << "md5" << endl;
+    else return ErrorType::notOpened;
+    return ErrorType::noError;
 }
 
 

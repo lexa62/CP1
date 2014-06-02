@@ -23,8 +23,8 @@ CheckFileHashWidget::CheckFileHashWidget(int Type, QFileInfoList list, QWidget *
     QHBoxLayout *hbox = new QHBoxLayout();
     hbox->addWidget(inputLine);
     hbox->addWidget(labelIcon);
+    connect(this, SIGNAL(statusChanged(QString)), this->parent(), SLOT(changeStatus(QString)));
     hashLine->setText(getHash(list.at(0).absoluteFilePath()));
-    vbox->setAlignment(Qt::AlignTop);
     vbox->addWidget(labelHash);
     vbox->addWidget(hashLine);
     vbox->addWidget(labelInput);
@@ -37,11 +37,11 @@ CheckFileHashWidget::CheckFileHashWidget(int Type, QFileInfoList list, QWidget *
 
 void CheckFileHashWidget::checkLines(QString string)
 {
-    if(!string.compare(hashLine->text()))
-        icon.load(":/monkey_ok.png");
+    if(!string.compare(hashLine->text(), Qt::CaseInsensitive))
+        icon.load(":/icon_ok.png");
 
     else
-        icon.load(":/monkey_bad.png");
+        icon.load(":/icon_bad.png");
     labelIcon->resize(icon.size());
     labelIcon->setPixmap(icon);
 }
@@ -55,18 +55,25 @@ void CheckFileHashWidget::compareFileAndLine()
 QString CheckFileHashWidget::getHash(QString path)
 {
     QString hash;
-    AlgorithmInterface *h;
-    if(algorithmType == AlgorithmType::crc32)
-        h = new Crc32();
-
-    if(algorithmType == AlgorithmType::md5)
-        h = new MD5();
-
-    if(algorithmType == AlgorithmType::sha1)
-        h = new Sha1();
-
-    h->openFile(path);
-    hash = h->getHashString();
-    delete h;
+    AlgorithmInterface *algorithm;
+    switch (algorithmType)
+    {
+        case AlgorithmType::crc32:
+            algorithm = new Crc32();
+            break;
+        case AlgorithmType::md5:
+            algorithm = new MD5();
+            break;
+        case AlgorithmType::sha1:
+            algorithm = new Sha1();
+            break;
+        default:
+            break;
+    }
+    if(algorithm->calculateFile(path) != ErrorType::noError)
+        statusChanged("Error with file");
+    else
+        hash = algorithm->getHashString();
+    delete algorithm;
     return hash;
 }

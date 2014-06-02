@@ -14,11 +14,16 @@ class HashViewWidget : public QWidget
 public:
     void addTableItems();
     HashViewWidget(int type, QFileInfoList filesList, QWidget *parent = 0);
-    ~HashViewWidget();
+    void processStatus(int status);
 public slots:
     void saveFilesHash();
+signals:
+    void statusChanged(QString status);
 
 private:
+    int ok;
+    int notOpened;
+    int corruptData;
     int algorithmType;
     QTableWidget *filesTable;
     QFileInfoList selectedFileList;

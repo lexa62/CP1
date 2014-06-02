@@ -12,9 +12,9 @@ class Crc32 : public AlgorithmInterface
         void crc_init();
 
     public:
-        QString getHashString();
         Crc32();
-        void openFile(QString path);
+        QString getHashString();
+        int calculateFile(QString path);
 };
 
 #endif

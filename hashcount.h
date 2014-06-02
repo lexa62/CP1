@@ -11,9 +11,9 @@ class HashCount : public QMainWindow
 
     public:
         HashCount();
-        ~HashCount();
     public slots:
         void changeWidget(QFileInfoList, int widgetType);
+        void changeStatus(QString message);
     private:
         SelectingAction *selectingAction;
         HashViewWidget *hashViewWidget;

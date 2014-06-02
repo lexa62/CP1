@@ -16,7 +16,10 @@
 HashViewWidget::HashViewWidget(int type, QFileInfoList filesList, QWidget *parent) :
     QWidget(parent), algorithmType(type), selectedFileList(filesList)
 {
-    filesTable = new QTableWidget(0, 3);
+    ok = 0;
+    corruptData = 0;
+    notOpened = 0;
+    filesTable = new QTableWidget(0, 3, this);
     QStringList labels;
     labels << "File Name" << "Size (KB)" << "Hash";
     filesTable->setHorizontalHeaderLabels(labels);
@@ -33,6 +36,7 @@ HashViewWidget::HashViewWidget(int type, QFileInfoList filesList, QWidget *paren
     vbox->addWidget(saveButton);
     setLayout(vbox);
     connect(saveButton, SIGNAL(clicked()), SLOT(saveFilesHash()));
+    connect(this, SIGNAL(statusChanged(QString)), this->parent(), SLOT(changeStatus(QString)));
 }
 
 void HashViewWidget::saveFilesHash()
@@ -73,12 +77,6 @@ void HashViewWidget::saveFilesHash()
     file.close();
 }
 
-HashViewWidget::~HashViewWidget()
-{
-    qDebug()<<"~HashViewWidget()";
-    delete filesTable;
-}
-
 void HashViewWidget::addTableItems()
 {
     QProgressDialog progress("", "Abort", 0, selectedFileList.count(), this);
@@ -109,23 +107,49 @@ void HashViewWidget::addTableItems()
     progress.setValue(selectedFileList.count());
     filesTable->setSortingEnabled(true);
     filesTable->sortByColumn(0);
+    emit statusChanged(tr("Ok: %1. Errors: %2 (Not opened: %3. Corrupt files: %4)").arg(ok)
+                       .arg(notOpened+corruptData).arg(notOpened).arg(corruptData));
+}
+
+void HashViewWidget::processStatus(int status)
+{
+    switch (status)
+    {
+        case ErrorType::noError:
+            ok++;
+            break;
+        case ErrorType::notOpened:
+            notOpened++;
+            break;
+        case ErrorType::corruptData:
+            corruptData++;
+            break;
+        default:
+            break;
+    }
 }
 
 QString HashViewWidget::getHash(QString path)
 {
     QString hash;
-    AlgorithmInterface *h;
-    if(algorithmType == AlgorithmType::crc32)
-        h = new Crc32();
-
-    if(algorithmType == AlgorithmType::md5)
-        h = new MD5();
-
-    if(algorithmType == AlgorithmType::sha1)
-        h = new Sha1();
-
-    h->openFile(path);
-    hash = h->getHashString();
-    delete h;
+    AlgorithmInterface *algorithm;
+    switch (algorithmType)
+    {
+        case AlgorithmType::crc32:
+            algorithm = new Crc32();
+            break;
+        case AlgorithmType::md5:
+            algorithm = new MD5();
+            break;
+        case AlgorithmType::sha1:
+            algorithm = new Sha1();
+            break;
+        default:
+            break;
+    }
+    int status = algorithm->calculateFile(path);
+    processStatus(status);
+    hash = algorithm->getHashString();
+    delete algorithm;
     return hash;
 }
