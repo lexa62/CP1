@@ -87,11 +87,6 @@ QFileInfoList SelectingAction::getSelectedFiles()
             }
             else filesInfoList.append(fileInfo);
         }
-        foreach (QFileInfo info, filesInfoList)
-        {
-            qDebug() << info.absoluteFilePath();
-        }
-        qDebug() << "Files count: " << filesInfoList.count();
     }
     return filesInfoList;
 }

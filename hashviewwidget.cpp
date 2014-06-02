@@ -6,7 +6,6 @@
 #include "md5.h"
 #include "sha1.h"
 #include <QHeaderView>
-#include <QPushButton>
 #include <QFileDialog>
 #include <QProgressDialog>
 #include <QErrorMessage>
@@ -59,12 +58,12 @@ void HashViewWidget::saveFilesHash()
     }
     fileFilter = tr("hash (%1);; text files (*.txt)").arg(fileSuffix);
     QString filePath = QFileDialog::getSaveFileUrl(this, "Save File", QDir::currentPath(), fileFilter).toLocalFile();
-    qDebug() << filePath;
+
     QFile file(filePath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
         QErrorMessage *mes = new QErrorMessage(this);
-        mes->showMessage(tr("File not opened (path: %1)").arg(filePath));
+        mes->showMessage(tr("File not opened (path: \"%1\")").arg(filePath));
         return;
     }
 

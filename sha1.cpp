@@ -1,12 +1,11 @@
 #include "sha1.h"
 #include <sstream>
 #include <iomanip>
-#include <fstream>
 #include "enumTypes.h"
 
 Sha1::Sha1()
 {
-    reset();
+    init();
 }
 
 int Sha1::calculateFile(QString path)
@@ -58,10 +57,7 @@ void Sha1::read(QDataStream &is, std::string &s, int max)
     s.assign(sbuf, count);
 }
 
-
-/*
- * Add padding and return the message digest.
- */
+// Add padding and return the message digest.
 
 std::string Sha1::final()
 {
@@ -104,7 +100,7 @@ std::string Sha1::final()
     return result.str();
 }
 
-void Sha1::reset()
+void Sha1::init()
 {
     /* SHA1 initialization constants */
     digest[0] = 0x67452301;
@@ -118,10 +114,7 @@ void Sha1::reset()
     buffer = "";
 }
 
-
-/*
- * Hash a single 512-bit block. This is the core of the algorithm.
- */
+// Hash a single 512-bit block. This is the core of the algorithm.
 
 void Sha1::transform(uint32 block[BLOCK_BYTES])
 {

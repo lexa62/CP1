@@ -4,9 +4,9 @@
 class AlgorithmInterface
 {
     public:
-        virtual ~AlgorithmInterface(){}
         virtual QString getHashString() = 0;
         virtual int calculateFile(QString) = 0;
+        virtual ~AlgorithmInterface(){}
 };
 
 #endif // ALGORITHMINTERFACE_H

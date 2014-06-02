@@ -24,6 +24,7 @@ CheckFilesHashesWidget::CheckFilesHashesWidget(int Type, QFileInfoList fileInfoL
     QStringList labels;
     labels << "File Name" << "Hash" << "Status";
     filesTable->setHorizontalHeaderLabels(labels);
+    filesTable->setColumnWidth(1, 150);
     filesTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     filesTable->horizontalHeader()->setStretchLastSection(true);
     filesTable->setShowGrid(false);
@@ -107,6 +108,7 @@ void CheckFilesHashesWidget::insertRow(QString fileName, QString createdHash, QS
     QTableWidgetItem *fileNameItem = new QTableWidgetItem(fileName);
     QTableWidgetItem *hashItem = new QTableWidgetItem(createdHash);
     QTableWidgetItem *statusItem = new QTableWidgetItem(status);
+    statusItem->setTextAlignment(Qt::AlignHCenter);
     int row = filesTable->rowCount();
     filesTable->insertRow(row);
     filesTable->setItem(row, 0, fileNameItem);

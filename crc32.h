@@ -17,4 +17,4 @@ class Crc32 : public AlgorithmInterface
         int calculateFile(QString path);
 };
 
-#endif
+#endif // CRC32_H

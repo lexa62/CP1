@@ -1,6 +1,5 @@
 #ifndef CHECKFILESHASHESWIDGET_H
 #define CHECKFILESHASHESWIDGET_H
-
 #include <QWidget>
 #include <QFileInfo>
 #include <QtGui>
@@ -10,21 +9,21 @@
 class CheckFilesHashesWidget : public QWidget
 {
     Q_OBJECT
-public:
-    CheckFilesHashesWidget(int Type, QFileInfoList fileInfoList, QWidget *parent);
-    void fillFileTable(QHash<QString, QString> hashContainer, QFileInfoList fileInfoList);
-    int openFile();
-signals:
-    void statusChanged(QString status);
-public slots:
+    public:
+        CheckFilesHashesWidget(int Type, QFileInfoList fileInfoList, QWidget *parent);
+        void fillFileTable(QHash<QString, QString> hashContainer, QFileInfoList fileInfoList);
+        int openFile();
 
-private:
-    QHash<QString, QString> getInfoFromFile();
-    QString fileInfoPath;
-    int algorithmType;
-    QTableWidget *filesTable;
-    QString getHash(QString path);
-    void insertRow(QString fileName, QString createdHash, QString status);
+    signals:
+        void statusChanged(QString status);
+
+    private:
+        QHash<QString, QString> getInfoFromFile();
+        QString fileInfoPath;
+        int algorithmType;
+        QTableWidget *filesTable;
+        QString getHash(QString path);
+        void insertRow(QString fileName, QString createdHash, QString status);
 };
 
 #endif // CHECKFILESHASHESWIDGET_H

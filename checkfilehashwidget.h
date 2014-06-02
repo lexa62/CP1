@@ -11,7 +11,6 @@
 class CheckFileHashWidget : public QWidget
 {
     Q_OBJECT
-
     public:
         CheckFileHashWidget(int Type, QFileInfoList list, QWidget *parent = 0);
 

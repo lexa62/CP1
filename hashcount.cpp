@@ -1,6 +1,4 @@
 #include "hashcount.h"
-#include "hashviewwidget.h"
-#include "QtGui"
 #include "enumTypes.h"
 #include <QStatusBar>
 
