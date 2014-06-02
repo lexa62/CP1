@@ -15,6 +15,7 @@ CheckFilesHashesWidget::CheckFilesHashesWidget(int Type, QFileInfoList fileInfoL
     QWidget(parent), algorithmType(Type)
 {
     QLabel *label = new QLabel("Checking result:");
+    connect(this, SIGNAL(closeApp()), this->parent(), SLOT(close()));
     QHash<QString, QString> hashContainer = getInfoFromFile();
     QVBoxLayout *vbox = new QVBoxLayout();
     filesTable = new QTableWidget(0, 3);
@@ -119,7 +120,7 @@ void CheckFilesHashesWidget::insertRow(QString fileName, QString createdHash, QS
 int CheckFilesHashesWidget::openFile()
 {
     QString filePath = QFileDialog::getOpenFileUrl(this, "Select file with hashes", QDir::currentPath(),
-                                                   "Hash (*.md5 *.crc32 *.sha1)").toLocalFile();
+                                           "Hash (*.md5 *.crc32 *.sha1);; All files (*)").toLocalFile();
 
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -132,10 +133,13 @@ QHash<QString, QString> CheckFilesHashesWidget::getInfoFromFile()
 {
     while(openFile() == ErrorType::notOpened)
     {
-        int n = QMessageBox::warning(0, "Warning", "File not opened. Do you want to select another file",
+        int n = QMessageBox::warning(this, "Warning", "File not opened. Do you want to select another file",
                                      QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
         if (n == QMessageBox::No)
-            qApp->quit();
+        {
+            emit closeApp();
+            break;
+        }
     }
     QFile file(fileInfoPath);
     file.open(QIODevice::ReadOnly | QIODevice::Text);

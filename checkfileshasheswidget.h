@@ -16,6 +16,7 @@ class CheckFilesHashesWidget : public QWidget
 
     signals:
         void statusChanged(QString status);
+        void closeApp();
 
     private:
         QHash<QString, QString> getInfoFromFile();
