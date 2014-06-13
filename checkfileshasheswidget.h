@@ -11,8 +11,6 @@ class CheckFilesHashesWidget : public QWidget
     Q_OBJECT
     public:
         CheckFilesHashesWidget(int Type, QFileInfoList fileInfoList, QWidget *parent);
-        void fillFileTable(QHash<QString, QString> hashContainer, QFileInfoList fileInfoList);
-        int openFile();
 
     signals:
         void statusChanged(QString status);
@@ -25,6 +23,8 @@ class CheckFilesHashesWidget : public QWidget
         QTableWidget *filesTable;
         QString getHash(QString path);
         void insertRow(QString fileName, QString createdHash, QString status);
+        void fillFileTable(QHash<QString, QString> hashContainer, QFileInfoList fileInfoList);
+        int openFile();
 };
 
 #endif // CHECKFILESHASHESWIDGET_H

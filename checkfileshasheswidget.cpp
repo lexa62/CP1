@@ -25,8 +25,9 @@ CheckFilesHashesWidget::CheckFilesHashesWidget(int Type, QFileInfoList fileInfoL
     QStringList labels;
     labels << "File Name" << "Hash" << "Status";
     filesTable->setHorizontalHeaderLabels(labels);
-    filesTable->setColumnWidth(1, 150);
+    //filesTable->setColumnWidth(1, 150);
     filesTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    filesTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
     filesTable->horizontalHeader()->setStretchLastSection(true);
     filesTable->setShowGrid(false);
 
@@ -94,6 +95,7 @@ QString CheckFilesHashesWidget::getHash(QString path)
             algorithm = new Sha1();
             break;
         default:
+            algorithm = new Sha1();
             break;
     }
     if(algorithm->calculateFile(path) != ErrorType::noError)
@@ -109,7 +111,7 @@ void CheckFilesHashesWidget::insertRow(QString fileName, QString createdHash, QS
     QTableWidgetItem *fileNameItem = new QTableWidgetItem(fileName);
     QTableWidgetItem *hashItem = new QTableWidgetItem(createdHash);
     QTableWidgetItem *statusItem = new QTableWidgetItem(status);
-    statusItem->setTextAlignment(Qt::AlignHCenter);
+    statusItem->setTextAlignment(Qt::AlignCenter);
     int row = filesTable->rowCount();
     filesTable->insertRow(row);
     filesTable->setItem(row, 0, fileNameItem);

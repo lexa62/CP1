@@ -96,6 +96,7 @@ void HashViewWidget::addTableItems()
         sizeItem->setTextAlignment(Qt::AlignCenter);
 
         QTableWidgetItem *hashItem = new QTableWidgetItem(getHash(selectedFileList[i].absoluteFilePath()));
+        hashItem->setTextAlignment(Qt::AlignCenter);
 
         int row = filesTable->rowCount();
         filesTable->insertRow(row);
@@ -144,6 +145,7 @@ QString HashViewWidget::getHash(QString path)
             algorithm = new Sha1();
             break;
         default:
+            algorithm = new Sha1();
             break;
     }
     int status = algorithm->calculateFile(path);

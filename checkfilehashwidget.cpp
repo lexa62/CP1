@@ -68,6 +68,7 @@ QString CheckFileHashWidget::getHash(QString path)
             algorithm = new Sha1();
             break;
         default:
+            algorithm = new Sha1();
             break;
     }
     if(algorithm->calculateFile(path) != ErrorType::noError)
